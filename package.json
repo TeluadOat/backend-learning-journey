@@ -1,0 +1,20 @@
+{
+  "name": "my-backend-learning-journey",
+  "version": "1.0.0",
+  "description": "This repository (will)document my progess as I learn backend development. It serves as my learning diary.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeluadOat/backend-learning-journey.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TeluadOat/backend-learning-journey/issues"
+  },
+  "homepage": "https://github.com/TeluadOat/backend-learning-journey#readme"
+}
