@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/TeluadOat/backend-learning-journey/issues"
   },
-  "homepage": "https://github.com/TeluadOat/backend-learning-journey#readme"
+  "homepage": "https://github.com/TeluadOat/backend-learning-journey#readme",
+  "dependencies": {
+    "morgan": "^1.10.1"
+  }
 }
