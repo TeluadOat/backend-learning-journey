@@ -55,6 +55,30 @@ Notes & suggestions (learning tips):
 - Use `populate()` to load referenced product documents, for example: `Farm.findOne(...).populate('products')`.
 - Uncomment `Product.insertMany` and `makeFarm()` to seed sample data for experimentation.
 
+## Tweet example
+The `Models/tweet.js` file demonstrates a "one-to-bajillions" (many) relationship where many `Tweet` documents reference a single `User` document.
+
+- `User` schema: `username`, `age`.
+- `Tweet` schema: `text`, `likes`, `user` is an `ObjectId` reference to `User`.
+
+What the script does:
+- Connects to MongoDB at `mongodb://127.0.0.1:27017/relationshipDemo`.
+- Defines `User` and `Tweet` models.
+- Example operations (commented): creating a tweet for an existing user; and `findTweet()` which finds one tweet and uses `populate('user', 'username')` to include the user's `username` in the result.
+
+Run the tweet example:
+
+```
+node .\Models\tweet.js
+```
+
+Learning notes and quick tips:
+- This pattern stores the parent reference in the child (`tweet.user = user._id`) so millions of tweets can reference the same user without duplicating user data.
+- Prefer pushing `user._id` when creating a tweet: `new Tweet({ text, likes, user: user._id })`.
+- Add defensive checks before using a result from `findOne()` to avoid `null` references.
+- Use `populate()` to load parent data when needed, and add an index on the `user` field for faster queries: `tweetSchema.index({ user: 1 })`.
+- For massive-scale workloads consider pagination, appropriate indexing, or event-driven denormalization for read-heavy paths.
+
 ## Usage
 - To test relationship behavior, create sample documents (users and related documents) and experiment with `populate()` or nested document access.
 - Use MongoDB Compass or `mongosh` to inspect the stored documents and confirm relations.
