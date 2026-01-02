@@ -81,11 +81,10 @@ This project demonstrates **one-to-many relationships** using Mongoose reference
 
 ### Farms Management
 
-- **View All Farms**: GET `/farms` - Display all farms
+- **View All Farms**: GET `/farms` - Display all farms with links to details
 - **Create Farm**: POST `/farms` - Add a new farm to the database
-- **View Farm Details**: GET `/farms/:id` - Display individual farm with associated products
-- **Edit Farm**: GET/PUT `/farms/:id/edit` - Update farm details
-- **Delete Farm**: DELETE `/farms/:id` - Remove a farm from the database
+- **View Farm Details**: GET `/farms/:id` - Display individual farm with associated products and links
+- **Delete Farm**: DELETE `/farms/:id` - Remove a farm and cascade delete all associated products
 - **Add Products to Farm**: GET/POST `/farms/:id/products/new` - Create products for specific farm
 
 ### Products Management
@@ -93,7 +92,7 @@ This project demonstrates **one-to-many relationships** using Mongoose reference
 - **View All Products**: GET `/products` - Display all products with optional category filtering
 - **Filter by Category**: GET `/products?category=vegetable` - Filter products by category
 - **Create Product**: POST `/products` - Add a new product to the database
-- **View Product Details**: GET `/products/:id` - Display individual product information
+- **View Product Details**: GET `/products/:id` - Display individual product with farm information
 - **Edit Product**: GET/PUT `/products/:id/edit` - Update product details
 - **Delete Product**: DELETE `/products/:id` - Remove a product from the database
 
@@ -145,18 +144,25 @@ The server will start on `http://localhost:3000`
 
 ### Mongoose Schema Validation
 The schemas demonstrate:
-- Required fields validation
+- Required fields validation with custom error messages
 - Data type constraints
 - Enum validation for categories
 - Number range validation (min price)
 - Auto-lowercasing for category values
-- Custom validation error messages
+- Middleware hooks for data manipulation and cascading operations
+
+### Cascade Deletes with Middleware
+- Using Mongoose `post("findOneAndDelete")` middleware
+- Deleting related documents when parent document is deleted
+- Preventing orphaned records in the database
 
 ### One-to-Many Relationships
 - Using `Schema.Types.ObjectId` and `ref` property to create relationships
-- Populating referenced documents
+- Populating referenced documents with `.populate()` to fetch full details
+- Cascade deletes: deleting a farm automatically deletes all associated products
 - Embedding arrays of references in parent documents
 - Understanding parent-child document relationships
+- Using post-middleware hooks (`post("findOneAndDelete")`) for cascade operations
 
 ### RESTful Routes
 - GET requests for retrieving data
@@ -164,12 +170,25 @@ The schemas demonstrate:
 - PUT requests for updating resources
 - DELETE requests for removing resources
 - Nested resource routes (e.g., `/farms/:id/products/new`)
+- Proper route ordering: POST before GET for same base path to avoid conflicts
 
-### Form Method Override
-Uses `method-override` middleware to handle PUT and DELETE requests through HTML forms (which only support GET and POST natively)
+### Populating References
+- Using `.populate()` to fetch referenced documents instead of just ObjectIds
+- Selecting specific fields to populate with second parameter
+- Building navigation and relationships between resources
+- Displaying related data in templates (e.g., farm name in product details)
 
 ### Async/Await Pattern
 Database operations use modern async/await syntax with error handling via `.catch()`
+
+### Dynamic Template Content
+- Passing complete objects to views instead of just IDs
+- Rendering relationship data in EJS templates
+- Using dot notation to access nested object properties
+- Displaying product counts and linked resources
+
+### Form Method Override
+Uses `method-override` middleware to handle PUT and DELETE requests through HTML forms (which only support GET and POST natively)
 
 ### Database Operations
 - Creating documents with constructors and `.save()`
