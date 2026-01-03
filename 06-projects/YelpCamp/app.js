@@ -5,6 +5,7 @@ const engine = require('ejs-mate');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 const { campgroundSchema } = require('./schemas');
+const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
 
 
@@ -84,6 +85,15 @@ app.delete('/campgrounds/:id', async (req, res) => {
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 });
+
+app.post('/campgrounds/:id/reviews', async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review._id);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+})
 
 app.all(/(.*)/, (req, res, next) => {
     throw new ExpressError('Page Not Found', 404);
