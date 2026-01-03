@@ -12,8 +12,9 @@ YelpCamp is a Yelp-inspired campground review platform where users can browse ca
 - **Add Campgrounds**: Create new campground listings
 - **Edit Campgrounds**: Update campground information
 - **Delete Campgrounds**: Remove campground listings
-- **Leave Reviews**: Write and submit reviews for campgrounds
-- **Data Validation**: Server-side validation using Joi schema
+- **Leave Reviews**: Write and submit reviews for campgrounds with ratings
+- **Data Validation**: Server-side and client-side validation using Joi schema
+- **Review Validation**: Enforce rating (1-5) and review body requirements
 - **Error Handling**: Custom error handling and error pages
 - **Responsive UI**: EJS templating with Bootstrap styling
 
