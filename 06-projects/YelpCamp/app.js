@@ -9,6 +9,8 @@ const { reviewSchema } = require('./schemas');
 const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
 
+const campgroundsRoutes = require('./routes/campgrounds');
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
 
@@ -50,53 +52,12 @@ const validateReview = (req, res, next) => {
     }
 };
 
-
-
 app.get('/', (req, res) => {
     res.render('home');
-})
-
-app.get('/campgrounds', async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', { campgrounds });
-})
-
-
-app.get('/campgrounds/new', (req, res) => {
-    res.render('campgrounds/new');
-})
-
-
-app.get('/campgrounds/:id', async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews');
-    res.render('campgrounds/show', { campground })
-})
-
-app.post('/campgrounds', validateCampground, async (req, res) => {
-    // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
-
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
 });
 
-app.get('/campgrounds/:id/edit', async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/edit', { campground });
-});
+app.use('/campgrounds', campgroundsRoutes);
 
-app.put('/campgrounds/:id', validateCampground, async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
-    res.redirect(`/campgrounds/${campground._id}`);
-});
-
-app.delete('/campgrounds/:id', async (req, res) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
-});
 
 app.post('/campgrounds/:id/reviews', validateReview, async (req, res) => {
     const campground = await Campground.findById(req.params.id);
