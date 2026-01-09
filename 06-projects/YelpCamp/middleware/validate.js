@@ -2,7 +2,7 @@ const ExpressError = require('../utils/ExpressError');
 
 const validate = (schema, property = "body") => {
 	return (req, res, next) => {
-		const { value, error } = schema.validate(req[body], {
+		const { value, error } = schema.validate(req[property], {
 			abortEarly: false,
 			stripUnknown: true
 		});

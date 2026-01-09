@@ -17,13 +17,11 @@ const showCampground = async (req, res) => {
 
 
 const createCampground = async (req, res) => {
-    async (req, res) => {
-        // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
+    // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
 
-        const campground = new Campground(req.body.campground);
-        await campground.save();
-        res.redirect(`/campgrounds/${campground._id}`);
-    };
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
 };
 
 const editCampgroundForm = async (req, res) => {
