@@ -1,48 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const Campground = require('../models/campground');
+const campgroundControllers = require('../controllers/campgrounds');
+const validate = require('../middleware/validate');
+const { campgroundSchema } = require('../schemas');
 
 
-router.get('/', async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', { campgrounds });
-})
 
+router.get('/', campgroundControllers.index);
 
-router.get('/new', (req, res) => {
-    res.render('campgrounds/new');
-})
+router.get('/new', campgroundControllers.newCampgroundForm);
 
+router.get('/:id', campgroundControllers.showCampground);
 
-router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews');
-    res.render('campgrounds/show', { campground })
-})
+router.post('/', validate(campgroundSchema), campgroundControllers.createCampground);
 
-router.post('/', validateCampground, async (req, res) => {
-    // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
+router.get('/:id/edit', campgroundControllers.editCampgroundForm);
 
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-});
+router.put('/:id', validate(campgroundSchema), campgroundControllers.updateCampground);
 
-router.get('/:id/edit', async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/edit', { campground });
-});
-
-router.put('/:id', validateCampground, async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
-    res.redirect(`/campgrounds/${campground._id}`);
-});
-
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
-});
+router.delete('/:id', campgroundControllers.deleteCampground);
 
 module.exports = router;
