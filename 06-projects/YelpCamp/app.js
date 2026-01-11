@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const engine = require('ejs-mate');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError');
+const session = require('express-session');
 
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
@@ -19,7 +20,7 @@ db.once("open", () => {
 
 const app = express();
 
-
+app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -27,8 +28,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, 'public')));
-app.engine('ejs', engine);
 
+const sessionConfig = {
+    secret: "thisshouldbeabettersecret!",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        HttpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    }
+}
+
+app.use(session(sessionConfig));
 
 app.get('/', (req, res) => {
     res.render('home');
