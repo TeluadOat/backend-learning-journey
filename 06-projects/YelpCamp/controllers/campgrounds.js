@@ -33,12 +33,14 @@ const editCampgroundForm = async (req, res) => {
 const updateCampground = async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    req.flash('success', 'Sucessfully updated campground')
     res.redirect(`/campgrounds/${campground._id}`);
 };
 
 const deleteCampground = async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
+    req.flash("success", "Successfully deleted campground")
     res.redirect('/campgrounds');
 };
 
