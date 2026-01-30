@@ -39,7 +39,7 @@ const sessionConfig = {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     }
-}
+};
 
 app.use(session(sessionConfig));
 app.use(flash());
@@ -56,9 +56,6 @@ app.get('/', (req, res) => {
 
 app.use('/campgrounds', campgroundsRoutes);
 app.use('/campgrounds/:id/reviews', reviewsRoutes);
-
-
-
 
 app.all(/(.*)/, (req, res, next) => {
     throw new ExpressError('Page Not Found', 404);

@@ -40,7 +40,7 @@ const editCampgroundForm = async (req, res) => {
 const updateCampground = async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
-    req.flash('success', 'Sucessfully updated campground')
+    req.flash('success', 'Sucessfully updated campground');
     res.redirect(`/campgrounds/${campground._id}`);
 };
 
@@ -51,8 +51,6 @@ const deleteCampground = async (req, res) => {
     res.redirect('/campgrounds');
 };
 
-
-
 module.exports = {
     index,
     newCampgroundForm,
@@ -62,4 +60,3 @@ module.exports = {
     updateCampground,
     deleteCampground
 };
-
