@@ -33,12 +33,26 @@ app.post("/register", async (req, res) => {
     );
     await user.save();
     res.redirect("/");
-})
+});
+
+app.get('/login', (req, res) => {
+    res.render("login");
+});
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    console.log(user);
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (isValidPassword) {
+        return res.redirect('/');
+    }
+    res.redirect('/login');
+});
 
 app.get("/secret", (req, res) => {
     res.send("This is a secret page");
 });
-
 
 async function startServer() {
     await connectDB();
