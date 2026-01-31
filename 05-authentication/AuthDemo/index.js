@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
 const bcrypt = require("bcrypt");
 const connectDB = require("./config/db");
 const User = require("./models/user");
@@ -13,6 +14,10 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(session({
+    secret: "my-secret-key",
+    resave: false,
+}));
 
 app.get("/", (req, res) => {
     res.send("This is the home page");
@@ -32,6 +37,7 @@ app.post("/register", async (req, res) => {
         }
     );
     await user.save();
+    req.session.user_id = user._id;
     res.redirect("/");
 });
 
@@ -45,13 +51,23 @@ app.post('/login', async (req, res) => {
     console.log(user);
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (isValidPassword) {
+        req.session.user_id = user._id;
         return res.redirect('/');
     }
     res.redirect('/login');
 });
 
+app.post('/logout', (req, res) => {
+    req.session.user_id = null;
+    res.redirect('/login');
+})
+
 app.get("/secret", (req, res) => {
-    res.send("This is a secret page");
+    if (!req.session.user_id) {
+        res.redirect("/login");
+    } else {
+        res.render("secret");
+    }
 });
 
 async function startServer() {
