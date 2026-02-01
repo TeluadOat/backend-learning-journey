@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const bcrypt = require("bcrypt");
 const connectDB = require("./config/db");
 const User = require("./models/user");
 
@@ -36,13 +35,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res) => {
     const { password, username } = req.body;
-    const hash = await bcrypt.hash(password, 12);
-    const user = new User(
-        {
-            username,
-            password: hash,
-        }
-    );
+    const user = new User({ username, password });
     await user.save();
     req.session.user_id = user._id;
     res.redirect("/");
