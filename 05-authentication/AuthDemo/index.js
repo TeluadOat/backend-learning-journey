@@ -19,6 +19,13 @@ app.use(session({
     resave: false,
 }));
 
+const requireLogin = (req, res, next) => {
+    if (!req.session.user_id) {
+        return res.redirect("/login");
+    };
+    next();
+}
+
 app.get("/", (req, res) => {
     res.send("This is the home page");
 });
@@ -47,11 +54,9 @@ app.get('/login', (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    console.log(user);
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (isValidPassword) {
-        req.session.user_id = user._id;
+    const foundUser = await User.findAndValidate(username, password);
+    if (foundUser) {
+        req.session.user_id = foundUser._id;
         return res.redirect('/');
     }
     res.redirect('/login');
@@ -62,12 +67,8 @@ app.post('/logout', (req, res) => {
     res.redirect('/login');
 })
 
-app.get("/secret", (req, res) => {
-    if (!req.session.user_id) {
-        res.redirect("/login");
-    } else {
-        res.render("secret");
-    }
+app.get("/secret", requireLogin, (req, res) => {
+    res.render("secret");
 });
 
 async function startServer() {
