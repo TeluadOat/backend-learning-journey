@@ -11,4 +11,6 @@ router.get('/login', userControllers.renderLogin);
 
 router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), userControllers.login);
 
+router.get('/logout', userControllers.logout);
+
 module.exports = router;

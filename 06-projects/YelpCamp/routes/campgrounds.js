@@ -11,14 +11,14 @@ router.get('/', campgroundControllers.index);
 
 router.get('/new', isLoggedIn, campgroundControllers.newCampgroundForm);
 
-router.get('/:id', campgroundControllers.showCampground);
+router.get('/:id', isLoggedIn, campgroundControllers.showCampground);
 
-router.post('/', validate(campgroundSchema), campgroundControllers.createCampground);
+router.post('/', isLoggedIn, validate(campgroundSchema), campgroundControllers.createCampground);
 
 router.get('/:id/edit', campgroundControllers.editCampgroundForm);
 
-router.put('/:id', validate(campgroundSchema), campgroundControllers.updateCampground);
+router.put('/:id', isLoggedIn, validate(campgroundSchema), campgroundControllers.updateCampground);
 
-router.delete('/:id', campgroundControllers.deleteCampground);
+router.delete('/:id', isLoggedIn, campgroundControllers.deleteCampground);
 
 module.exports = router;
