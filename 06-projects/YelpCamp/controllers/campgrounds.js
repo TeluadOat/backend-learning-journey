@@ -6,6 +6,10 @@ const index = async (req, res) => {
 };
 
 const newCampgroundForm = (req, res) => {
+    if (!req.isAuthenticated()) {
+        req.flash('error', 'You must be signed in.');
+        return res.redirect('/login');
+    }
     res.render('campgrounds/new');
 };
 
