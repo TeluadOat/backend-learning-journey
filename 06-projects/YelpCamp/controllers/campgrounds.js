@@ -16,6 +16,8 @@ const showCampground = async (req, res) => {
         req.flash('error', 'campground not found');
         return res.redirect('/campgrounds');
     };
+    console.log("Current User", req.user._id);
+    console.log("Author:", campground.author);
     res.render('campgrounds/show', { campground })
 };
 
