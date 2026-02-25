@@ -15,7 +15,7 @@ router.get('/:id', isLoggedIn, campgroundControllers.showCampground);
 
 router.post('/', isLoggedIn, validate(campgroundSchema), campgroundControllers.createCampground);
 
-router.get('/:id/edit', campgroundControllers.editCampgroundForm);
+router.get('/:id/edit', isLoggedIn, campgroundControllers.editCampgroundForm);
 
 router.put('/:id', isLoggedIn, validate(campgroundSchema), campgroundControllers.updateCampground);
 
