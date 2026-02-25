@@ -32,17 +32,27 @@ const createCampground = async (req, res) => {
 };
 
 const editCampgroundForm = async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
     if (!campground) {
         req.flash('error', 'campground not found');
         return res.redirect('/campgrounds');
+    };
+    if (!campground.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/campgrounds/${id}`);
     };
     res.render('campgrounds/edit', { campground });
 };
 
 const updateCampground = async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    const campground = await Campground.findById(id);
+    if (!campground.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/campgrounds/${id}`);
+    }
+    const updatedCampground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     req.flash('success', 'Sucessfully updated campground');
     res.redirect(`/campgrounds/${campground._id}`);
 };
