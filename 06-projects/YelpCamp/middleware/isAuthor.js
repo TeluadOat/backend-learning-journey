@@ -6,7 +6,7 @@ const isAuthor = async (req, res, next) => {
     if (!foundCampground.author.equals(req.user._id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/campgrounds/${id}`);
-    }
+    };
     next();
 };
 

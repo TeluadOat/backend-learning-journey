@@ -11,13 +11,19 @@ const newCampgroundForm = (req, res) => {
 
 const showCampground = async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews').populate('author');
+    const campground = await Campground.findById(id)
+        .populate({
+            path: 'reviews',
+            populate: {
+                path: "author"
+            }
+        })
+        .populate('author');
+    console.log(campground)
     if (!campground) {
         req.flash('error', 'campground not found');
         return res.redirect('/campgrounds');
     };
-    console.log("Current User", req.user._id);
-    console.log("Author:", campground.author);
     res.render('campgrounds/show', { campground })
 };
 

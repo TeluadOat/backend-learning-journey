@@ -12,7 +12,7 @@ router.get('/', campgroundControllers.index);
 
 router.get('/new', isLoggedIn, campgroundControllers.newCampgroundForm);
 
-router.get('/:id', isLoggedIn, campgroundControllers.showCampground);
+router.get('/:id', campgroundControllers.showCampground);
 
 router.post('/', isLoggedIn, validate(campgroundSchema), campgroundControllers.createCampground);
 
