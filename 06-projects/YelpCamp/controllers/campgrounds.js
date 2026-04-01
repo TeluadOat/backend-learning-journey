@@ -19,7 +19,6 @@ const showCampground = async (req, res) => {
             }
         })
         .populate('author');
-    console.log(campground)
     if (!campground) {
         req.flash('error', 'campground not found');
         return res.redirect('/campgrounds');
