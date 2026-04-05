@@ -2,6 +2,8 @@
 
 A full-stack web application for discovering and reviewing campgrounds, built with Node.js, Express, and MongoDB.
 
+> Note: Minor documentation update added for commit tracking.
+
 ## Project Overview
 
 YelpCamp is a Yelp-inspired campground review platform where users can browse campgrounds, add new campgrounds, write reviews, and share their camping experiences. The application demonstrates full CRUD operations (Create, Read, Update, Delete) for both campgrounds and reviews.
