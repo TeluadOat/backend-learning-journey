@@ -32,7 +32,7 @@ const createCampground = async (req, res) => {
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
     if (req.files && req.files.length > 0) {
-        campground.image = req.files.map(file => ({ url: file.path, fileName: file.filename }));
+        campground.images = req.files.map(file => ({ url: file.path, fileName: file.filename }));
     }
     await campground.save();
     req.flash('success', 'Successfully made a new campground');
@@ -52,7 +52,19 @@ const editCampgroundForm = async (req, res) => {
 const updateCampground = async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
-    const updatedCampground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+
+    if (!campground) {
+        req.flash('error', 'Campground not found');
+        return res.redirect('/campgrounds');
+    }
+
+    campground.set(req.body.campground);
+
+    if (req.files && req.files.length > 0) {
+        const images = req.files.map(file => ({ url: file.path, fileName: file.filename }));
+        campground.images.push(...images);
+    }
+    await campground.save();
     req.flash('success', 'Sucessfully updated campground');
     res.redirect(`/campgrounds/${campground._id}`);
 };
