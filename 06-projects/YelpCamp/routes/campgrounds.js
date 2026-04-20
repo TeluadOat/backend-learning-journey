@@ -16,16 +16,11 @@ router.get('/new', isLoggedIn, campgroundControllers.newCampgroundForm);
 
 router.get('/:id', campgroundControllers.showCampground);
 
-router.post('/', isLoggedIn, upload.array('image'), validateImage, validate(campgroundSchema), campgroundControllers.createCampground);
-
-// router.post('/', upload.single('image'), (req, res, next) => {
-//     console.log(req.file, req.body)
-//     res.send("It worked!");
-// })
+router.post('/', isLoggedIn, upload.array('images'), validateImage, validate(campgroundSchema), campgroundControllers.createCampground);
 
 router.get('/:id/edit', isLoggedIn, isAuthor, campgroundControllers.editCampgroundForm);
 
-router.put('/:id', isLoggedIn, isAuthor, validate(campgroundSchema), campgroundControllers.updateCampground);
+router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validateImage, validate(campgroundSchema), campgroundControllers.updateCampground);
 
 router.delete('/:id', isLoggedIn, isAuthor, campgroundControllers.deleteCampground);
 
