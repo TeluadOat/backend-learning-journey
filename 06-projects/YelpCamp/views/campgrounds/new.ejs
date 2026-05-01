@@ -11,10 +11,10 @@
           <label class="form-label" for="location">Location</label>
           <input class="form-control" type="text" id="location" name="campground[location]" required>
         </div>
-        <div class="mb-3">
-          <!-- <label class="form-label" for="image">Image URL</label>
-          <input class="form-control" type="text" id="image" name="campground[image]" required> -->
-          <input type="file" name="images" id="images" accept="image/*" multiple>
+        <div class="mb-3 custom-file">
+          <span class="d-inline-block text-truncate w-75">Add image(s)</span>
+          <input class="custom-file-input" type="file" id="images" name="images" multiple>
+          <label class="form-label custom-file-label d-block" for="images"> </label>
         </div>
         <div class="mb-3">
           <label class="form-label" for="location">Price</label>
