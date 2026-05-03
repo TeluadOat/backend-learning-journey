@@ -1,4 +1,25 @@
 const Campground = require('../models/campground');
+const { cloudinary, ALLOWED_FORMATS } = require('../config/cloudinary');
+
+const uploadImages = async (files) => {
+    const images = [];
+    let totalSize = 0;
+    for (const file of files) {
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: 'YelpCamp', allowed_formats: ALLOWED_FORMATS },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            uploadStream.end(file.buffer);
+        });
+        images.push({ url: result.secure_url, fileName: result.public_id, size: file.size });
+        totalSize += file.size;
+    }
+    return { images, totalSize };
+};
 
 const index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -26,13 +47,13 @@ const showCampground = async (req, res) => {
     res.render('campgrounds/show', { campground })
 };
 
-
 const createCampground = async (req, res) => {
-    // if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
     if (req.files && req.files.length > 0) {
-        campground.images = req.files.map(file => ({ url: file.path, fileName: file.filename }));
+        const { images, totalSize } = await uploadImages(req.files);
+        campground.images = images;
+        campground.totalStorageUsed = totalSize;
     }
     await campground.save();
     req.flash('success', 'Successfully made a new campground');
@@ -51,20 +72,33 @@ const editCampgroundForm = async (req, res) => {
 
 const updateCampground = async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id);
+    const { images, totalSize } = req.files && req.files.length > 0
+        ? await uploadImages(req.files)
+        : { images: [], totalSize: 0 };
+
+    const updateData = { ...req.body.campground };
+
+    const update = {
+        ...(Object.keys(updateData).length > 0 && {
+            $set: updateData,
+        }),
+        ...(images.length > 0 ? {
+            $push: { images: { $each: images } },
+            $inc: { totalStorageUsed: totalSize },
+        } : {})
+    }
+
+
+    const campground = await Campground.findByIdAndUpdate(id, update, {
+        new: true,
+        runValidators: true
+    });
 
     if (!campground) {
         req.flash('error', 'Campground not found');
         return res.redirect('/campgrounds');
     }
 
-    campground.set(req.body.campground);
-
-    if (req.files && req.files.length > 0) {
-        const images = req.files.map(file => ({ url: file.path, fileName: file.filename }));
-        campground.images.push(...images);
-    }
-    await campground.save();
     req.flash('success', 'Sucessfully updated campground');
     res.redirect(`/campgrounds/${campground._id}`);
 };
