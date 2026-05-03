@@ -6,7 +6,7 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 const isAuthor = require('../middleware/isAuthor');
 const { campgroundSchema } = require('../schemas');
 const upload = require('../config/multer');
-const validateImage = require('../middleware/isValidImage');
+const validateImageStorage = require('../middleware/validateImageStorage');
 
 
 
@@ -16,11 +16,11 @@ router.get('/new', isLoggedIn, campgroundControllers.newCampgroundForm);
 
 router.get('/:id', campgroundControllers.showCampground);
 
-router.post('/', isLoggedIn, upload.array('images'), validateImage, validate(campgroundSchema), campgroundControllers.createCampground);
+router.post('/', isLoggedIn, upload.array('images'), validateImageStorage, validate(campgroundSchema), campgroundControllers.createCampground);
 
 router.get('/:id/edit', isLoggedIn, isAuthor, campgroundControllers.editCampgroundForm);
 
-router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validateImage, validate(campgroundSchema), campgroundControllers.updateCampground);
+router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validateImageStorage, validate(campgroundSchema), campgroundControllers.updateCampground);
 
 router.delete('/:id', isLoggedIn, isAuthor, campgroundControllers.deleteCampground);
 
