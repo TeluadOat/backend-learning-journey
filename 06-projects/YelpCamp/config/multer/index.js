@@ -1,4 +1,3 @@
-const { cloudinary, storage } = require('../cloudinary');
 const ExpressError = require('../../utils/ExpressError');
 
 const multer = require('multer');
