@@ -4,7 +4,21 @@ const Schema = mongoose.Schema;
 
 const campgroundSchema = new Schema({
     title: String,
-    images: [{ url: String, fileName: String }],
+    images: [
+        {
+            url: String,
+            fileName: String,
+            size: Number // in bytes
+        }
+    ],
+    totalStorageUsed: {
+        type: Number,
+        default: 0
+    },
+    maxStorageAllowed: {
+        type: Number,
+        default: 25 * 1024 * 1024, //25MB default
+    },
     price: Number,
     description: String,
     location: String,
