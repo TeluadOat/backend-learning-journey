@@ -1,0 +1,21 @@
+<% layout('./layouts/boilerplate') %>
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="text-center">Campground Images</h1>
+    <form action="/campgrounds/<%= campground._id %>/edit/images" method="post">
+      <div class="row">
+        <% campground.images.forEach(image => { %>
+        <div class="col-sm-4 mb-3">
+          <img class="img-thumbnail" src="<%= image.url.replace('/upload/', '/upload/w_300,h_200,c_fill/') %>" alt="<%= image.fileName %>">
+          <input class="image-checkbox" type="checkbox" name="deleteImages[]" value="<%= image.fileName %>">
+        </div>
+        <% }); %>
+      </div>
+      <button id="deleteBtn" type="submit" class="btn btn-danger btn-sm col-1" disabled>Delete</button>
+    </form>
+    <p class="text-muted">Tick Image Box to delete to select for deletion</p>
+
+  </div>
+</div>
+
+<% script = `<script src="/javascripts/imageCheckbox.js"></script>` %>
