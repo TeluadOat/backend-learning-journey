@@ -82,6 +82,30 @@ const updateCampground = async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`);
 };
 
+const showImages = async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findById(id).lean();
+    if (!campground) {
+        req.flash('error', 'Campground not found');
+        return res.redirect(`/campgrounds/${id}/edit`);
+    }
+    res.render('campgrounds/images', { campground });
+}
+
+const deleteImages = async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
+    if (!campground) {
+        req.flash('error', 'Campground not found');
+        return res.redirect(`/campgrounds/${id}/edit`);
+    }
+
+    console.log(req.body);
+
+    res.redirect(`/campgrounds/${id}/edit/images`);
+
+}
+
 const deleteCampground = async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
@@ -96,5 +120,7 @@ module.exports = {
     createCampground,
     editCampgroundForm,
     updateCampground,
+    showImages,
+    deleteImages,
     deleteCampground
 };

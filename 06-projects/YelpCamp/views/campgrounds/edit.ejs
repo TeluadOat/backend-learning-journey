@@ -11,16 +11,11 @@
         <label class="form-label" for="location">Location</label>
         <input class="form-control" type="text" id="location" name="campground[location]" value="<%= campground.location %>" required>
       </div>
-      <div class="mb-3 custom-file">
-        <span class="d-inline-block text-truncate w-75">Add image(s)</span>
-        <input class="custom-file-input" type="file" id="images" name="images" value="<%= campground.images[0].fileName %>" multiple>
-        <label class="form-label custom-file-label d-block" for="images"> </label>
-      </div>
       <div class="mb-3">
-        <label class="form-label" for="location">Price</label>
+        <label class="form-label" for="price">Price</label>
         <div class="input-group">
           <span class="input-group-text" id="price-label">$</span>
-          <input type="text" class="form-control" placeholder="0.00" name="campground[price]" value="<%= campground.price %>" aria-label="Price" aria-describedby="price-label" required>
+          <input type="text" id="price" class="form-control" placeholder="0.00" name="campground[price]" value="<%= campground.price %>" aria-label="Price" aria-describedby="price-label" required>
         </div>
       </div>
       <div class="mb-3">
@@ -32,5 +27,6 @@
       </div>
     </form>
     <a href="/campgrounds/<%= campground._id %>">Back</a>
+    <a href="/campgrounds/<%= campground._id %>/edit/images">Manage Images</a>
   </div>
 </div>

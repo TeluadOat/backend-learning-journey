@@ -20,7 +20,11 @@ router.post('/', isLoggedIn, upload.array('images'), validateImageStorage, valid
 
 router.get('/:id/edit', isLoggedIn, isAuthor, campgroundControllers.editCampgroundForm);
 
-router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validateImageStorage, validate(campgroundSchema), campgroundControllers.updateCampground);
+router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validate(campgroundSchema), campgroundControllers.updateCampground);
+
+router.get('/:id/edit/images', isLoggedIn, isAuthor, campgroundControllers.showImages);
+
+router.post('/:id/edit/images', campgroundControllers.deleteImages);
 
 router.delete('/:id', isLoggedIn, isAuthor, campgroundControllers.deleteCampground);
 
