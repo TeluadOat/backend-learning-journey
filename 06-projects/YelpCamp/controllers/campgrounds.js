@@ -52,23 +52,12 @@ const editCampgroundForm = async (req, res) => {
 
 const updateCampground = async (req, res) => {
     const { id } = req.params;
-    const { images, totalSize } = req.files && req.files.length > 0
-        ? await uploadImages(req.files)
-        : { images: [], totalSize: 0 };
+
 
     const updateData = { ...req.body.campground };
 
-    const update = {
-        ...(Object.keys(updateData).length > 0 && {
-            $set: updateData,
-        }),
-        ...(images.length > 0 ? {
-            $push: { images: { $each: images } },
-            $inc: { totalStorageUsed: totalSize },
-        } : {})
-    }
 
-    const campground = await Campground.findByIdAndUpdate(id, update, {
+    const campground = await Campground.findByIdAndUpdate(id, updateData, {
         new: true,
         runValidators: true
     });
@@ -87,9 +76,37 @@ const showImages = async (req, res) => {
     const campground = await Campground.findById(id).lean();
     if (!campground) {
         req.flash('error', 'Campground not found');
-        return res.redirect(`/campgrounds/${id}/edit`);
+        return res.redirect(`/campgrounds/${id}/images`);
     }
     res.render('campgrounds/images', { campground });
+}
+
+const addImages = async (req, res) => {
+    const { id } = req.params;
+    const { images, totalSize } = req.files && req.files.length > 0
+        ? await uploadImages(req.files)
+        : { images: [], totalSize: 0 };
+
+    const update = {
+        ...(images.length > 0 ? {
+            $push: { images: { $each: images } },
+            $inc: { totalStorageUsed: totalSize },
+        } : {})
+    }
+
+    const campground = await Campground.findByIdAndUpdate(id, update, {
+        new: true,
+        runValidators: true
+    });
+
+    if (!campground) {
+        req.flash('error', 'Campground not found');
+        return res.redirect('/campgrounds');
+    }
+
+    req.flash('success', 'Sucessfully updated campground images(s)');
+    res.redirect(`/campgrounds/${campground._id}`);
+
 }
 
 const deleteImages = async (req, res) => {
@@ -102,7 +119,7 @@ const deleteImages = async (req, res) => {
 
     console.log(req.body);
 
-    res.redirect(`/campgrounds/${id}/edit/images`);
+    res.redirect(`/campgrounds/${id}/images`);
 
 }
 
@@ -121,6 +138,7 @@ module.exports = {
     editCampgroundForm,
     updateCampground,
     showImages,
+    addImages,
     deleteImages,
     deleteCampground
 };

@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-md-12">
     <h1 class="text-center">Campground Images</h1>
-    <form action="/campgrounds/<%= campground._id %>/edit/images" method="post">
+    <form action="/campgrounds/<%= campground._id %>/images?_method=DELETE" method="post">
       <div class="row">
         <% campground.images.forEach(image => { %>
         <div class="col-sm-4 mb-3">
@@ -11,11 +11,26 @@
         </div>
         <% }); %>
       </div>
-      <button id="deleteBtn" type="submit" class="btn btn-danger btn-sm col-1" disabled>Delete</button>
+      <button id="deleteBtn" type="submit" class="btn btn-danger btn-sm" disabled>Delete</button>
     </form>
     <p class="text-muted">Tick Image Box to delete to select for deletion</p>
 
   </div>
 </div>
 
-<% script = `<script src="/javascripts/imageCheckbox.js"></script>` %>
+<form action="/campgrounds/<%= campground._id %>/images" method="POST" enctype="multipart/form-data" class="mt-4">
+  <div class="mb-3">
+    <label class="form-label d-block" for="images">Add image(s)</label>
+    <input class="form-control" type="file" id="images" name="images" multiple>
+    <div id="imagePreview" class="mt-2"></div>
+  </div>
+
+  <button type="submit" class="btn btn-success btn-sm">
+    Upload
+  </button>
+</form>
+
+<% script = `
+<script src="/javascripts/imageCheckbox.js"></script>
+<script src="/javascripts/imageFileUpload.js"></script>
+` %>

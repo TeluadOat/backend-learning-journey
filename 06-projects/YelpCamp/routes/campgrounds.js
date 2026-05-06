@@ -22,9 +22,11 @@ router.get('/:id/edit', isLoggedIn, isAuthor, campgroundControllers.editCampgrou
 
 router.put('/:id', isLoggedIn, isAuthor, upload.array('images'), validate(campgroundSchema), campgroundControllers.updateCampground);
 
-router.get('/:id/edit/images', isLoggedIn, isAuthor, campgroundControllers.showImages);
+router.get('/:id/images', isLoggedIn, isAuthor, campgroundControllers.showImages);
 
-router.post('/:id/edit/images', campgroundControllers.deleteImages);
+router.post('/:id/images', isLoggedIn, isAuthor, upload.array('images'), validateImageStorage, campgroundControllers.addImages);
+
+router.delete('/:id/images', isLoggedIn, isAuthor, campgroundControllers.deleteImages);
 
 router.delete('/:id', isLoggedIn, isAuthor, campgroundControllers.deleteCampground);
 
