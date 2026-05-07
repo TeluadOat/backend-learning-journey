@@ -1,5 +1,6 @@
 const Campground = require('../models/campground');
 const uploadImages = require('../utils/uploadImages');
+const deleteImages = require('../utils/deleteCloudinaryImages');
 
 const index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -117,7 +118,16 @@ const deleteImages = async (req, res) => {
         return res.redirect(`/campgrounds/${id}/edit`);
     }
 
-    console.log(req.body);
+    if (req.body.deleteImages && req.body.deleteImages.length > 0) {
+        await deleteImages(req.body.deleteImages);
+        await campground.updateOne({
+            $pull: { images: { fileName: { $in: req.body.deleteImages } } },
+            $inc: { totalStorageUsed: -campground.images.filter(img => req.body.deleteImages.includes(img.fileName)).reduce((acc, img) => acc + img.size, 0) }
+        });
+        req.flash('success', 'Selected images deleted successfully');
+    } else {
+        req.flash('error', 'No images selected for deletion');
+    }
 
     res.redirect(`/campgrounds/${id}/images`);
 
