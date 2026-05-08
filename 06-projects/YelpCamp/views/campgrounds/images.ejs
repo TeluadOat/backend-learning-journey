@@ -6,7 +6,7 @@
       <div class="row">
         <% campground.images.forEach(image => { %>
         <div class="col-sm-4 mb-3">
-          <img class="img-thumbnail" src="<%= image.url.replace('/upload/', '/upload/w_300,h_200,c_fill/') %>" alt="<%= image.fileName %>">
+          <img class="img-thumbnail" src="<%= image.thumbnail %>" alt="<%= image.fileName %>">
           <input class="image-checkbox" type="checkbox" name="deleteImages[]" value="<%= image.fileName %>">
         </div>
         <% }); %>

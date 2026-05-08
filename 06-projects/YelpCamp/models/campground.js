@@ -2,15 +2,23 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
+const imageSchema = new Schema({
+    url: String,
+    fileName: String,
+    size: Number // in bytes
+}, {
+    virtuals: {
+        thumbnail: {
+            get() {
+                return this.url.replace('/upload/', '/upload/w_300,h_200,c_fill/');
+            }
+        }
+    }
+});
+
 const campgroundSchema = new Schema({
     title: String,
-    images: [
-        {
-            url: String,
-            fileName: String,
-            size: Number // in bytes
-        }
-    ],
+    images: [imageSchema],
     totalStorageUsed: {
         type: Number,
         default: 0
@@ -42,6 +50,6 @@ campgroundSchema.post('findOneAndDelete', async function (doc) {
             }
         })
     }
-})
+});
 
 module.exports = mongoose.model('Campground', campgroundSchema);

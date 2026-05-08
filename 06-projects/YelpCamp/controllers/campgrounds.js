@@ -73,7 +73,7 @@ const updateCampground = async (req, res) => {
 
 const showImages = async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id).lean();
+    const campground = await Campground.findById(id);
     if (!campground) {
         req.flash('error', 'Campground not found');
         return res.redirect(`/campgrounds/${id}/images`);
@@ -123,7 +123,7 @@ const deleteImages = async (req, res) => {
         await deleteCloudinaryImages(req.body.deleteImages);
         await campground.updateOne({
             $pull: { images: { fileName: { $in: req.body.deleteImages } } },
-            $inc: { totalStorageUsed: -campground.images.filter(img => req.body.deleteImages.includes(img.fileName)).reduce((acc, img) => acc + img.size, 0) }
+            $inc: { totalStorageUsed: -campground.images.filter(img => req.body.deleteImages.includes(img.fileName)).reduce((acc, img) => acc + (Number(img.size) || 0), 0) }
         });
         req.flash('success', 'Selected images deleted successfully');
     } else {

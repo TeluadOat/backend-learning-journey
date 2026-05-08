@@ -14,8 +14,8 @@ const uploadImages = async (files) => {
             );
             uploadStream.end(file.buffer);
         });
-        images.push({ url: result.secure_url, fileName: result.public_id, size: file.size });
-        totalSize += file.size;
+        images.push({ url: result.secure_url, fileName: result.public_id, size: Number(file.size) || 0 });
+        totalSize += Number(file.size) || 0;
     }
     return { images, totalSize };
 };

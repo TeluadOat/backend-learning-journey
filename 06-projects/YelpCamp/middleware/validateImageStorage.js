@@ -30,7 +30,7 @@ const validateImageStorage = async (req, res, next) => {
 
         for (const file of files) {
             // Check file size
-            if (file.size <= 0) {
+            if (!file.size || typeof file.size !== 'number' || isNaN(file.size) || file.size <= 0) {
                 throw new ExpressError('Invalid file size', 400);
             }
             totalNewSize += file.size;
