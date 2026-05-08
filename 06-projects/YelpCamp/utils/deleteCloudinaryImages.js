@@ -1,9 +1,9 @@
-const { cloudinary } = require('../cloudinary');
+const { cloudinary } = require('../config/cloudinary');
 
 const deleteCloudinaryImages = async (images) => {
     await Promise.all(
         images.map(img =>
-            cloudinary.uploader.destroy(img.fileName)
+            cloudinary.uploader.destroy(img)
         )
     );
 };
