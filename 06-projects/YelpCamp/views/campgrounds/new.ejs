@@ -13,7 +13,10 @@
         </div>
         <div class="mb-3 custom-file">
           <label class="form-label d-block" for="images">Add image(s)</label>
-          <input type="file" id="images" name="images" multiple>
+          <input class="form-control" type="file" id="images" name="images" multiple required>
+          <div class="invalid-feedback">
+            You must select at least one image.
+          </div>
           <div id="imagePreview" class="mt-2"></div>
         </div>
         <div class="mb-3">

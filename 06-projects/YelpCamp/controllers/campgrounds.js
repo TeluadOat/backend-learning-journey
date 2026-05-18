@@ -1,6 +1,9 @@
 const Campground = require('../models/campground');
 const uploadImages = require('../utils/uploadImages');
 const deleteCloudinaryImages = require('../utils/deleteCloudinaryImages');
+const maptilerClient = require("@maptiler/client");
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+
 const index = async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
@@ -28,7 +31,17 @@ const showCampground = async (req, res) => {
 };
 
 const createCampground = async (req, res) => {
+    const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
+    console.log(geoData);
+    if (!geoData.features?.length) {
+        req.flash('error', 'Could not geocode that location. Please try again and enter a valid location.');
+        return res.redirect('/campgrounds/new');
+    }
     const campground = new Campground(req.body.campground);
+
+    campground.geometry = geoData.features[0].geometry;
+    campground.location = geoData.features[0].place_name;
+
     campground.author = req.user._id;
     if (req.files && req.files.length > 0) {
         const { images, totalSize } = await uploadImages(req.files);
@@ -53,8 +66,17 @@ const editCampgroundForm = async (req, res) => {
 const updateCampground = async (req, res) => {
     const { id } = req.params;
 
+    const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
+    // console.log(geoData);
+    if (!geoData.features?.length) {
+        req.flash('error', 'Could not geocode that location. Please try again and enter a valid location.');
+        return res.redirect(`/campgrounds/${id}/edit`);
+    }
+
 
     const updateData = { ...req.body.campground };
+    updateData.geometry = geoData.features[0].geometry;
+    updateData.location = geoData.features[0].place_name;
 
 
     const campground = await Campground.findByIdAndUpdate(id, updateData, {
