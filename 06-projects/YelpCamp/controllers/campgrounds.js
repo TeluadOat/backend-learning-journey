@@ -32,7 +32,7 @@ const showCampground = async (req, res) => {
 
 const createCampground = async (req, res) => {
     const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
-    console.log(geoData);
+    // console.log(geoData);
     if (!geoData.features?.length) {
         req.flash('error', 'Could not geocode that location. Please try again and enter a valid location.');
         return res.redirect('/campgrounds/new');
@@ -139,7 +139,7 @@ const deleteImages = async (req, res) => {
         return res.redirect(`/campgrounds/${id}/edit`);
     }
 
-    console.log(req.body.deleteImages);
+    // console.log(req.body.deleteImages);
 
     if (req.body.deleteImages && req.body.deleteImages.length > 0) {
         await deleteCloudinaryImages(req.body.deleteImages);
