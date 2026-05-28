@@ -24,18 +24,21 @@
 </div>
 <% } %>
 
-<%- "<script>" %>
-const maptilerApiKey = "<%- process.env.MAPTILER_API_KEY %>";
-const campgrounds = {
-type: "FeatureCollection",
-features: <%- JSON.stringify(
-    campgrounds.map(campground => ({
-      type: "Feature",
-      geometry: campground.geometry,
-      properties: { popUpMarkup: campground?.properties?.popUpMarkup }
-    }))
-  ) %>
-};
-<%- "</script>" %>
-
+<% 
+script = `
+<script>
+  const maptilerApiKey = ${JSON.stringify(process.env.MAPTILER_API_KEY)};
+  const campgrounds = {
+    type: "FeatureCollection",
+    features: ${JSON.stringify(
+      campgrounds.map(campground => ({
+        type: "Feature",
+        geometry: campground.geometry,
+        properties: { popUpMarkup: campground?.properties?.popUpMarkup }
+      }))
+    )}
+  };
+</script>
 <script src="/javascripts/clusterMap.js"></script>
+` 
+%>
