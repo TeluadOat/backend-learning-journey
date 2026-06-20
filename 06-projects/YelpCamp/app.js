@@ -9,6 +9,8 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
+const sanitizeV5 = require('./utils/mongoSanitizeV5');
+
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
@@ -30,9 +32,13 @@ db.once("open", () => {
 
 const app = express();
 
+app.set('query parser', 'extended');
+
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use(sanitizeV5({ replaceWith: '_' }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -62,6 +68,7 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.use((req, res, next) => {
+    console.log(req.query);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;
