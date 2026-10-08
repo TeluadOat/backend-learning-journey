@@ -8,12 +8,12 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const helmet = require('helmet');
 
 const sanitizeV5 = require('./utils/mongoSanitizeV5');
 
-if (process.env.NODE_ENV !== "production") {
-    require('dotenv').config();
-}
+require('dotenv').config({ quiet: true });
+
 
 const User = require('./models/user');
 
@@ -21,8 +21,12 @@ const usersRoutes = require('./routes/users')
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
 
+const dbUrl = process.env.DB_CONNECTION_STRING;
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+// || 'mongodb://127.0.0.1:27017/yelp-camp';
+
+
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on("error", console.log.bind(console, "connection error:"));
@@ -46,11 +50,13 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const sessionConfig = {
+    name: "session",
     secret: "thisshouldbeabettersecret!",
     resave: false,
     saveUninitialized: true,
     cookie: {
         HttpOnly: true,
+        // secure: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     }
@@ -58,6 +64,56 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/",
+];
+
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/",
+];
+
+const connectSrcUrls = [
+    "https://api.maptiler.com/",
+];
+
+const fontSrcUrls = [];
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            useDefaults: false,
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", ...scriptSrcUrls],
+                workerSrc: ["'self'", "blob:"],
+                objectSrc: ["'none'"],
+                connectSrc: ["'self'", ...connectSrcUrls],
+                styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+                fontSrc: ["'self'", ...fontSrcUrls],
+                imgSrc: [
+                    "'self'",
+                    "blob:",
+                    "data:",
+                    `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`,
+                    "https://api.maptiler.com/",
+                    "https://images.unsplash.com/",
+
+                ],
+
+                upgradeInsecureRequests: [],
+            },
+        },
+    }),
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -68,7 +124,7 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.use((req, res, next) => {
-    console.log(req.query);
+    // console.log(req.query);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;
@@ -95,4 +151,4 @@ app.use((err, req, res, next) => {
 
 app.listen('3000', () => {
     console.log("LISTENING ON PORT 3000!");
-});
+}); 
