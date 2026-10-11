@@ -4,7 +4,8 @@ const { places, descriptors } = require('./seedHelpers');
 const Campground = require('../models/campground');
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+const dbUrl = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/yelp-camp'
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on("error", console.log.bind(console, "connection error:"));

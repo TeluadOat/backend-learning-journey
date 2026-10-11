@@ -5,6 +5,7 @@ const engine = require('ejs-mate');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
+const { MongoStore } = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -21,9 +22,7 @@ const usersRoutes = require('./routes/users')
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
 
-const dbUrl = process.env.DB_CONNECTION_STRING;
-
-// || 'mongodb://127.0.0.1:27017/yelp-camp';
+const dbUrl = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/yelp-camp';
 
 
 mongoose.connect(dbUrl);
@@ -49,7 +48,13 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+});
+
 const sessionConfig = {
+    store,
     name: "session",
     secret: "thisshouldbeabettersecret!",
     resave: false,
@@ -149,6 +154,9 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('campgrounds/error', { err });
 });
 
-app.listen('3000', () => {
-    console.log("LISTENING ON PORT 3000!");
-}); 
+
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serving on port ${port}`);
+});
